@@ -94,7 +94,7 @@ def merge_closest_pairs(delta_l, points_min_l, delta_r, points_min_r, delta_cros
     if min_delta == delta_cross:
         closest_pairs.extend(points_min_cross)
 
-    # remove duplicate pairs
+    # Remove duplicate pairs (doesn't ignore order, because we dont want to sort anything in a recurisive function)
     closest_pairs = list(set([tuple(map(tuple, pair)) for pair in closest_pairs]))
     return min_delta, closest_pairs
 
@@ -148,6 +148,8 @@ def enhanced_divide_and_conquer_closest_pair(points: list[tuple[float, float]]) 
     points_sorted_by_x = sorted(points, key=lambda point: point[0])
     points_sorted_by_y = sorted(points, key=lambda point: point[1])
     min_delta, closest_pairs =  recurisive_enhanced_divide_and_conquer_closest_pair(points_sorted_by_x, points_sorted_by_y)
+    # Remove duplicate pairs (ignoring order) from 'closest_pairs'
+    closest_pairs = list(set([tuple(sorted(map(tuple, pair))) for pair in closest_pairs]))
     return min_delta, closest_pairs
 
 if __name__ == "__main__":
