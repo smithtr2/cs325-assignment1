@@ -98,7 +98,7 @@ def merge_closest_pairs(delta_l, points_min_l, delta_r, points_min_r, delta_cros
     closest_pairs = list(set([tuple(map(tuple, pair)) for pair in closest_pairs]))
     return min_delta, closest_pairs
 
-def enhanced_divide_and_conquer_closest_pair(points_sorted_by_x: list[tuple[float, float]], points_sorted_by_y: list[tuple[float, float]]) -> tuple[float, list[tuple[tuple[float, float], tuple[float, float]]]]:
+def recurisive_enhanced_divide_and_conquer_closest_pair(points_sorted_by_x, points_sorted_by_y):
     """
     Recursively find the closest pair of points using a divide-and-conquer approach.
     
@@ -110,8 +110,6 @@ def enhanced_divide_and_conquer_closest_pair(points_sorted_by_x: list[tuple[floa
         min_delta: The minimum distance between the closest pair(s) of points.
         closest_pairs: A list of closest point pairs.
     """
-    
-    # TODO 
     if len(points_sorted_by_x) <= 3:
         return brute_force_closest_pair(points_sorted_by_x)
     else:
@@ -120,8 +118,8 @@ def enhanced_divide_and_conquer_closest_pair(points_sorted_by_x: list[tuple[floa
         points_l_sorted_by_y = [point for point in points_sorted_by_y if point in points_l_sorted_by_x]
         points_r_sorted_by_y = [point for point in points_sorted_by_y if point in points_r_sorted_by_x]
 
-        delta_l, points_min_l = enhanced_divide_and_conquer_closest_pair(points_l_sorted_by_x, points_l_sorted_by_y)
-        delta_r, points_min_r = enhanced_divide_and_conquer_closest_pair(points_r_sorted_by_x, points_r_sorted_by_y)
+        delta_l, points_min_l = recurisive_enhanced_divide_and_conquer_closest_pair(points_l_sorted_by_x, points_l_sorted_by_y)
+        delta_r, points_min_r = recurisive_enhanced_divide_and_conquer_closest_pair(points_r_sorted_by_x, points_r_sorted_by_y)
         delta_min = min(delta_l, delta_r)
 
         points_cross = [point for point in points_sorted_by_y if abs(point[0] - median_x) <= delta_min]
@@ -130,12 +128,32 @@ def enhanced_divide_and_conquer_closest_pair(points_sorted_by_x: list[tuple[floa
         min_delta, closest_pairs = merge_closest_pairs(delta_l, points_min_l, delta_r, points_min_r, delta_cross, points_min_cross)
         return min_delta, closest_pairs
 
+def enhanced_divide_and_conquer_closest_pair(points: list[tuple[float, float]]) -> tuple[float, list[tuple[tuple[float, float], tuple[float, float]]]]:
+    """
+    Recursively find the closest pair of points using a divide-and-conquer approach.
+    
+    Args:
+        points (list[tuple[float, float]]): A list of 2D points where 
+                                            each point is represented as a tuple (x, y).
+                                            
+    Returns:
+        tuple[float, list[tuple[tuple[float, float], tuple[float, float]]]]:
+            - The minimum distance between the closest pair(s) of points.
+            - A list of tuples representing the closest point pairs, where each pair is a 
+              tuple of two points ((x1, y1), (x2, y2)).
+    """
+    
+    # TODO 
+    # Pre-sort all points based on 𝑥 and 𝑦 coordinates respectively
+    points_sorted_by_x = sorted(points, key=lambda point: point[0])
+    points_sorted_by_y = sorted(points, key=lambda point: point[1])
+    min_delta, closest_pairs =  recurisive_enhanced_divide_and_conquer_closest_pair(points_sorted_by_x, points_sorted_by_y)
+    return min_delta, closest_pairs
+
 if __name__ == "__main__":
     try:
         points = read_input_from_cli()
-        points_sorted_by_x = sorted(points, key=lambda point: point[0])
-        points_sorted_by_y = sorted(points, key=lambda point: point[1])
-        min_dist, closest_pairs = enhanced_divide_and_conquer_closest_pair(points_sorted_by_x, points_sorted_by_y)
+        min_dist, closest_pairs = enhanced_divide_and_conquer_closest_pair(points)
         closest_pairs = sort_pairs(closest_pairs)
         print(f"Minimum Distance: {min_dist}")
         print("Closest Pairs:")
