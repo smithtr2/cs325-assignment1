@@ -2,7 +2,32 @@ import sys
 from itertools import combinations
 import math
 from a1_utils import read_input_from_cli, distance, write_output_to_file, sort_pairs
-from brute_force import brute_force_closest_pair
+
+def brute_force_closest_pair(points: list[tuple[float, float]]) -> tuple[float, list[tuple[tuple[float, float], tuple[float, float]]]]:
+    """
+    Find the closest pair of points using brute force.
+    
+    Args:
+        points (list[tuple[float, float]]): A list of 2D points, where each point is represented 
+                                            as a tuple of coordinates (x, y).
+                                            
+    Returns:
+        tuple[float, list[tuple[tuple[float, float], tuple[float, float]]]]:
+            - The updated minimum distance (float) between the closest pair(s) of points.
+            - A list of tuples representing the closest point pairs, where each pair is a 
+              tuple of two points ((x1, y1), (x2, y2)).
+    """
+    min_dist = float('inf')
+    closest_pairs = []
+    
+    for p1, p2 in combinations(points, 2):
+        dist = distance(p1, p2)
+        if dist < min_dist:
+            min_dist = dist
+            closest_pairs = [(p1, p2)] #update the closest pair
+        elif dist == min_dist:
+            closest_pairs.append((p1,p2))
+    return min_dist, closest_pairs
 
 def split_points_to_two_parts(points_sorted_by_x):
     """
